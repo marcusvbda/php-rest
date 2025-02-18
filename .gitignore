@@ -1,0 +1,16 @@
+.idea/*
+!.idea/runConfigurations
+/Dockerfile
+composer.lock
+vendor
+/src/*.db
+node_modules
+.mysql
+.phpunit.result.cache
+TODO
+
+thunder-tests
+
+.secrets
+.env
+ignore.txt
