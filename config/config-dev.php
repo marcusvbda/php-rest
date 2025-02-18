@@ -30,6 +30,7 @@ use MyRest\Model\User;
 use MyRest\Psr11;
 use MyRest\Repository\DummyHexRepository;
 use MyRest\Repository\DummyRepository;
+use MyRest\Repository\ExampleCrudRepository;
 use MyRest\Repository\UserDefinition as UserDefinitionAlias;
 
 return [
@@ -74,6 +75,10 @@ return [
         ->toSingleton(),
 
     DummyHexRepository::class => DI::bind(DummyHexRepository::class)
+        ->withInjectedConstructor()
+        ->toSingleton(),
+
+    ExampleCrudRepository::class => DI::bind(ExampleCrudRepository::class)
         ->withInjectedConstructor()
         ->toSingleton(),
 
@@ -143,7 +148,7 @@ return [
         ])
         ->withMethodCall("withMiddleware", [Param::get(JwtMiddleware::class)])
         ->withMethodCall("withMiddleware", [Param::get(CorsMiddleware::class)])
-//        ->withMethodCall("withDetailedErrorHandler", [])
+        //        ->withMethodCall("withDetailedErrorHandler", [])
         ->toSingleton(),
 
     // ----------------------------------------------------------------------------
