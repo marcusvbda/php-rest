@@ -13,6 +13,43 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/chatbot/ask": {
+            "get": {
+                "summary": "Hello word",
+                "operationId": "GET::/chatbot/ask::MyRest\\Rest\\ChatbotRest::ask",
+                "parameters": [
+                    {
+                        "name": "question",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The chatbot's response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "result"
+                                    ],
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "format": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/dummyhex/{id}": {
             "get": {
                 "tags": [
@@ -734,7 +771,7 @@
         },
         "/hello": {
             "get": {
-                "summary": "Simple ping",
+                "summary": "Hello word",
                 "operationId": "GET::/hello::MyRest\\Rest\\HelloRest::getPing",
                 "responses": {
                     "200": {

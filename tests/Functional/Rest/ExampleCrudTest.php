@@ -7,7 +7,6 @@ use ByJG\RestServer\Exception\Error403Exception;
 use ByJG\Serializer\BinderObject;
 use MyRest\Util\FakeApiRequester;
 use MyRest\Model\ExampleCrud;
-use MyRest\Repository\BaseRepository;
 
 class ExampleCrudTest extends BaseApiTestCase
 {

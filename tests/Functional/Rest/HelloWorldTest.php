@@ -2,12 +2,7 @@
 
 namespace Test\Functional\Rest;
 
-use ByJG\RestServer\Exception\Error401Exception;
-use ByJG\RestServer\Exception\Error403Exception;
-use ByJG\Serializer\BinderObject;
 use MyRest\Util\FakeApiRequester;
-use MyRest\Model\ExampleCrud;
-use MyRest\Repository\BaseRepository;
 
 class HelloWorldTest extends BaseApiTestCase
 {
@@ -15,10 +10,6 @@ class HelloWorldTest extends BaseApiTestCase
     {
         parent::setUp();
     }
-
-    /**
-     * @return HelloWorldTest|array
-     */
 
     public function testGetResult()
     {
