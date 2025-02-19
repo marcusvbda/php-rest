@@ -2,8 +2,10 @@
 
 namespace Test\Functional\Rest;
 
-use ByJG\RestServer\Exception\Error400Exception;
+use GuzzleHttp\Client;
+use InvalidArgumentException;
 use MyRest\Util\FakeApiRequester;
+use MyRest\Util\OpenAIService;
 
 class ChatbotTest extends BaseApiTestCase
 {
@@ -12,21 +14,35 @@ class ChatbotTest extends BaseApiTestCase
         parent::setUp();
     }
 
-    public function testFailQuestionParamsIsMissing(): void
+    public function testSuccessResponseWithMockedApi(): void
     {
-        $this->expectException(Error400Exception::class);
-        $request = new FakeApiRequester();
+        $clientMock = $this->createMock(OpenAIService::class);
+        $clientMock->method('askGPT')
+            ->willReturn("This is a mock response");
+        $request = new FakeApiRequester($clientMock);
         $request
             ->withPsr7Request($this->getPsr7Request())
             ->withMethod('GET')
-            ->withPath("/chatbot/ask?filename=ipsum")
+            ->withPath("/chatbot/ask?question=lorem&filename=getting_started")
+            ->assertResponseCode(200);
+        $this->assertRequest($request);
+    }
+
+    public function testFailQuestionParamsIsMissing(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $request = new FakeApiRequester(new Client());
+        $request
+            ->withPsr7Request($this->getPsr7Request())
+            ->withMethod('GET')
+            ->withPath("/chatbot/ask?filename=getting_started")
             ->assertResponseCode(400);
         $this->assertRequest($request);
     }
 
     public function testFailFileParamsIsMissing(): void
     {
-        $this->expectException(Error400Exception::class);
+        $this->expectException(InvalidArgumentException::class);
         $request = new FakeApiRequester();
         $request
             ->withPsr7Request($this->getPsr7Request())
@@ -38,7 +54,7 @@ class ChatbotTest extends BaseApiTestCase
 
     public function testFailIfFilenameIsIncorrect(): void
     {
-        $this->expectException(Error400Exception::class);
+        $this->expectException(InvalidArgumentException::class);
         $request = new FakeApiRequester();
         $request
             ->withPsr7Request($this->getPsr7Request())

@@ -24,6 +24,7 @@ use ByJG\RestServer\OutputProcessor\JsonCleanOutputProcessor;
 use ByJG\RestServer\Route\OpenApiRouteList;
 use ByJG\Util\JwtKeySecret;
 use ByJG\Util\JwtWrapper;
+use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use MyRest\Model\User;
@@ -32,6 +33,7 @@ use MyRest\Repository\DummyHexRepository;
 use MyRest\Repository\DummyRepository;
 use MyRest\Repository\ExampleCrudRepository;
 use MyRest\Repository\UserDefinition as UserDefinitionAlias;
+use MyRest\Util\OpenAIService;
 
 return [
 
@@ -167,4 +169,18 @@ return [
         return new Envelope(Psr11::container()->get('EMAIL_TRANSACTIONAL_FROM'), $to, $prefix . $subject, $body, true);
     },
 
+
+    Client::class => DI::bind(Client::class)
+        ->withConstructorArgs([
+            [
+                'base_uri' => 'https://api.openai.com/v1/'
+            ]
+        ])
+        ->toSingleton(),
+
+    OpenAIService::class => DI::bind(OpenAIService::class)
+        ->withConstructorArgs([
+            Param::get(Client::class),
+        ])
+        ->toSingleton(),
 ];

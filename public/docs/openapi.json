@@ -15,7 +15,7 @@
     "paths": {
         "/chatbot/ask": {
             "get": {
-                "summary": "Hello word",
+                "summary": "Ask the chatbot a question based on a specific document.",
                 "operationId": "GET::/chatbot/ask::MyRest\\Rest\\ChatbotRest::ask",
                 "parameters": [
                     {
@@ -24,6 +24,20 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filename",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "getting_started",
+                                "getting_started_01_create_table",
+                                "getting_started_02_add_new_field",
+                                "getting_started_03_create_rest_method"
+                            ]
                         }
                     }
                 ],
@@ -34,10 +48,29 @@
                             "application/json": {
                                 "schema": {
                                     "required": [
-                                        "result"
+                                        "answer"
                                     ],
                                     "properties": {
-                                        "result": {
+                                        "answer": {
+                                            "type": "string",
+                                            "format": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "error"
+                                    ],
+                                    "properties": {
+                                        "error": {
                                             "type": "string",
                                             "format": "string"
                                         }
@@ -784,8 +817,7 @@
                                     ],
                                     "properties": {
                                         "result": {
-                                            "type": "string",
-                                            "format": "string"
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"

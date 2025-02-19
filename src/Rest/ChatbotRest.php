@@ -2,10 +2,11 @@
 
 namespace MyRest\Rest;
 
-use ByJG\RestServer\Exception\Error400Exception;
 use ByJG\RestServer\HttpRequest;
 use ByJG\RestServer\HttpResponse;
+use MyRest\Psr11;
 use MyRest\Util\OpenAIService;
+use MyRest\Util\OpenApiContext;
 use OpenApi\Attributes as OA;
 
 class ChatbotRest
@@ -14,7 +15,7 @@ class ChatbotRest
 
     public function __construct()
     {
-        $this->service = new OpenAIService();
+        $this->service = Psr11::container()->get(OpenAIService::class);
     }
 
     /**
@@ -70,24 +71,9 @@ class ChatbotRest
     )]
     public function ask(HttpResponse $response, HttpRequest $request): void
     {
+        OpenApiContext::validateRequest($request);
         $question = $request->get("question");
         $filename = $request->get("filename");
-
-        $validFilenames = [
-            "getting_started",
-            "getting_started_01_create_table",
-            "getting_started_02_add_new_field",
-            "getting_started_03_create_rest_method"
-        ];
-
-        if (empty($question) || empty($filename)) {
-            throw new Error400Exception("Os parâmetros 'question' e 'filename' são obrigatórios.");
-        }
-
-        if (!in_array($filename, $validFilenames, true)) {
-            throw new Error400Exception("O parâmetro 'filename' é inválido.");
-        }
-
         $answer = $this->service->askGPT($question, $filename);
         $response->write(["answer" => $answer]);
     }

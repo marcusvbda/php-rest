@@ -23,7 +23,7 @@ class HelloRest
         content: new OA\JsonContent(
             required: ["result"],
             properties: [
-                new OA\Property(property: "result", type: "string", format: "string")
+                new OA\Property(property: "result", type: "string")
             ]
         )
     )]

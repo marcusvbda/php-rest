@@ -4,21 +4,15 @@ namespace MyRest\Util;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Dotenv\Dotenv;
+use MyRest\Psr11;
 
 class OpenAIService
 {
-    private string $apiKey;
     private Client $httpClient;
 
-    public function __construct()
+    public function __construct(Client $httpClient)
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-        $dotenv->load();
-        $this->apiKey = $_ENV['OPENAI_API_KEY'] ?: '';
-        $this->httpClient = new Client([
-            'base_uri' => 'https://api.openai.com/v1/',
-        ]);
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -28,7 +22,7 @@ class OpenAIService
      */
     public function getApiKey(): string
     {
-        return $this->apiKey;
+        return Psr11::container()->get('OPENAI_API_KEY');
     }
 
     /**
@@ -55,13 +49,10 @@ class OpenAIService
     {
         $filePath = __DIR__ . "/../../docs/$fileName.md";
         if (!file_exists($filePath)) {
-            return "Erro: O arquivo '$fileName.md' não foi encontrado.";
+            throw new \InvalidArgumentException("O arquivo '$fileName.md' não foi encontrado.");
         }
 
         $context = file_get_contents($filePath);
-        if (empty(trim($context))) {
-            return "Erro: O arquivo '$fileName.md' está vazio.";
-        }
 
         $payload = [
             'model' => 'gpt-4-turbo',
@@ -76,16 +67,16 @@ class OpenAIService
         try {
             $response = $this->httpClient->post('chat/completions', [
                 'headers' => [
-                    'Authorization' => "Bearer {$this->apiKey}",
+                    'Authorization' => "Bearer {$this->getApiKey()}",
                     'Content-Type'  => 'application/json',
                 ],
                 'json' => $payload
             ]);
 
             $data = json_decode($response->getBody()->getContents(), true);
-            return $data['choices'][0]['message']['content'] ?? "Erro ao gerar resposta.";
+            return $data['choices'][0]['message']['content'];
         } catch (GuzzleException $e) {
-            return "Erro na comunicação com a OpenAI: " . $e->getMessage();
+            throw new \Exception("Erro ao conectar ao OpenAI: " . $e->getMessage());
         }
     }
 }
